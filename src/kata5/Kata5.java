@@ -1,7 +1,12 @@
 package kata5;
 
-import static kata5.BDCreator.createDB;
-import static kata5.TableCreator.createTable;
+import java.util.List;
+import kata5.db.TableInserter;
+import kata5.db.SelectApp;
+import static kata5.db.BDCreator.createDB;
+import static kata5.db.TableCreator.createTable;
+import kata5.model.*;
+import kata5.view.*;
 
 public class Kata5 {
 
@@ -10,13 +15,19 @@ public class Kata5 {
         String table = "mails";
         createDB(db);
         createTable(db, table);
-        TableInserter idt = new TableInserter();
-        idt.insert("abc@ulpgc.es",db, table);
-        idt.insert("xyz@ull.es",db,table);
-        idt.insert("def123@gmail.com",db,table);
-        SelectApp app = new SelectApp();
-        app.selectAll(db,table);
+        init(db,table);
+        List<Mail> mailList = MailListDBReader.read(db, table);
+        Histogram<String> histogram = MailHistogramBuilder.build(mailList);
+        HistogramDisplay histogramDisplay = new HistogramDisplay(histogram);
+        histogramDisplay.execute();
     }
     
+    private static void init(String db, String table){
+        TableInserter idt = new TableInserter();
+        idt.insert("def123@gmail.com",db,table);
+        idt.insert("def123@ulpgc.com",db,table);
+        idt.insert("def123@hotmail.es",db,table);
+        idt.insert("def123@gmail.com",db,table);
+    }
     
 }
